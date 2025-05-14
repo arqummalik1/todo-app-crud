@@ -15,7 +15,7 @@ const ShoppingItem = () => {
      
      {/* delete button */}
      <TouchableOpacity>
-     <MaterialCommunityIcons name="delete-empty" size={24} color="black" />
+     <MaterialCommunityIcons name="delete-empty" size={18} color="#121212" />
      </TouchableOpacity>
     </View>
   )
