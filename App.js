@@ -6,17 +6,25 @@ import {
   ImageBackground,
   TouchableOpacity,
   TextInput,
+  FlatList,
+  ActivityIndicator
 } from "react-native";
-import React ,{useState}from "react";
+import React ,{useState,useEffect}from "react";
 import ShoppingItem from "./components/ShoppingItem";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import {app,db,collection,addDoc,getFirestore} from './firebase/index'
+import {app,db,collection,addDoc,getFirestore,getDocs} from './firebase/index'
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const App = () => {
   const [title,setTitle] = useState('');
+  const [list,setList] = useState([])
+  console.log('list',list)
 
-  const addShoppingItem = async()=>{
+  useEffect(()=>{
+    getItems();
+  },[])
+
+  const addItem = async()=>{
     try {
       const docRef = await addDoc(collection(db, "todoList"), {
         title : title,
@@ -24,11 +32,27 @@ const App = () => {
        // id : 0
       });
       console.log("Document written with ID: ", docRef.id);
+      setTitle("")
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-    
+     getItems();
   }
+
+  const getItems = async () => {
+    const querySnapshot = await getDocs(collection(db, "todoList"));
+    const items = querySnapshot.docs.map((doc)=>(
+      {
+        ...doc.data(),
+        id : doc.id
+      }
+    ))
+    console.log("Items ==>>",items)
+    setList(items)
+  }
+
+  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -39,12 +63,15 @@ const App = () => {
           <MaterialCommunityIcons name="delete-sweep" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      <ShoppingItem />
-      <ShoppingItem />
-      <ShoppingItem />
-      <ShoppingItem />
-      <ShoppingItem />
-      <ShoppingItem />
+      { list.length > 0 ? 
+      <FlatList
+      data = {list}
+      renderItem= {({item})=> <ShoppingItem data={item}/>}
+      keyExtractor={(item)=> item.id}
+      />
+      :  
+     < ActivityIndicator size="large" />
+      }
 
       {/* Text input */}
       <View style={styles.inputWrapper}>
@@ -53,9 +80,9 @@ const App = () => {
           style={styles.input}
           value={title}
           onChangeText={setTitle}
-         onSubmitEditing={addShoppingItem}
+         onSubmitEditing={addItem}
         />
-        <TouchableOpacity onPress={addShoppingItem}>
+        <TouchableOpacity onPress={addItem}>
         <Ionicons name="enter-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>

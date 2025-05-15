@@ -3,7 +3,8 @@ import React from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-const ShoppingItem = () => {
+const ShoppingItem = ({data}) => {
+ 
   return (
     <View style= {styles.container}>
      {/* Check icon */}
@@ -11,7 +12,7 @@ const ShoppingItem = () => {
      <AntDesign name="checkcircleo" size={24} color="black" />
      </TouchableOpacity>
      {/* item name */}
-     <Text style={styles.title}>Bread</Text>
+     <Text style={styles.title}>{data.title}</Text>
      
      {/* delete button */}
      <TouchableOpacity>
